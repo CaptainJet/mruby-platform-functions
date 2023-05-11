@@ -27,7 +27,7 @@ module Platform
 end
 
 if Platform.web?
-    Platform.set_main_loop
+    Platform::Emscripten.set_main_loop
 else
     loop { Platform.main_loop }
 end
