@@ -1,15 +1,18 @@
 #include "mruby.h"
+#include "mruby/compile.h"
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
 
-void mrb_real_main_loop(mrb_state *mrb)
+void mrb_real_main_loop(void *arg)
 {
-  mrb_funcall(mrb, mrb_module_get(mrb, "Platform"), "main_loop", 0);
+  mrb_state *mrb = arg;
+  //mrb_funcall(mrb, mrb_module_get(mrb, "Platform"), "main_loop", 0);
+  mrb_load_string(mrb, "Platform.main_loop");
 }
 
 mrb_value mrb_set_main_loop(mrb_state *mrb, mrb_value self)
 {
-  emscripten_set_main_loop_arg(mrb_real_main_loop, mrb, 0, 1);
+  emscripten_set_main_loop_arg(mrb_real_main_loop, &mrb, 0, 1);
   return mrb_nil_value();
 }
 #endif
