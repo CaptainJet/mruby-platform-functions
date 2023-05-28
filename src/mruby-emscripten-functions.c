@@ -1,16 +1,18 @@
 #include "mruby.h"
-#include "mruby/compile.h"
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
-EM_JS(char*, js_get_attribute_from_element, (const char* selectorPointer, const char* attributePointer), {
+EM_JS(char *, js_get_attribute_from_element, (const char *selectorPointer, const char *attributePointer), {
   const selector = Module.UTF8ToString(selectorPointer);
   let attribute = Module.UTF8ToString(attributePointer);
   let value;
 
-  if (attribute.slice(0, 5) === 'data-') {
+  if (attribute.slice(0, 5) == = 'data-')
+  {
     attribute = attribute.slice(5, attribute.length);
     value = document.querySelector(selector).dataset[attribute];
-  } else {
+  }
+  else
+  {
     value = document.querySelector(selector)[attribute];
   }
 
@@ -22,14 +24,15 @@ EM_JS(char*, js_get_attribute_from_element, (const char* selectorPointer, const 
   return valuePointer;
 });
 
-mrb_value mrb_get_attribute_from_element(mrb_state *mrb, mrb_value self) {
+mrb_value mrb_get_attribute_from_element(mrb_state *mrb, mrb_value self)
+{
   char *selector, *attribute;
   mrb_get_args(mrb, "zz", &selector, &attribute);
 
   return mrb_str_new_cstr(mrb, js_get_attribute_from_element(selector, attribute));
 }
 
-EM_JS(void, js_local_storage_set_item, (const char* keyPointer, const char* valuePointer), {
+EM_JS(void, js_local_storage_set_item, (const char *keyPointer, const char *valuePointer), {
   const key = Module.UTF8ToString(keyPointer);
   const value = Module.UTF8ToString(valuePointer);
 
@@ -37,7 +40,8 @@ EM_JS(void, js_local_storage_set_item, (const char* keyPointer, const char* valu
   localStorage.setItem(key, value);
 });
 
-mrb_value mrb_local_storage_set_item(mrb_state *mrb, mrb_value self) {
+mrb_value mrb_local_storage_set_item(mrb_state *mrb, mrb_value self)
+{
   char *key, *value;
   mrb_get_args(mrb, "zz", &key, &value);
 
@@ -46,7 +50,7 @@ mrb_value mrb_local_storage_set_item(mrb_state *mrb, mrb_value self) {
   return mrb_nil_value();
 }
 
-EM_JS(char*, js_local_storage_get_item, (const char* keyPointer), {
+EM_JS(char *, js_local_storage_get_item, (const char *keyPointer), {
   const key = Module.UTF8ToString(keyPointer);
 
   // We can't return two different types, so let's just return an empty string,
@@ -61,7 +65,8 @@ EM_JS(char*, js_local_storage_get_item, (const char* keyPointer), {
   return valuePointer;
 });
 
-mrb_value mrb_local_storage_get_item(mrb_state *mrb, mrb_value self) {
+mrb_value mrb_local_storage_get_item(mrb_state *mrb, mrb_value self)
+{
   char *key;
   mrb_get_args(mrb, "z", &key);
 
@@ -71,8 +76,9 @@ mrb_value mrb_local_storage_get_item(mrb_state *mrb, mrb_value self) {
 void mrb_real_main_loop(void *arg)
 {
   mrb_state *mrb = arg;
-  //mrb_funcall(mrb, mrb_module_get(mrb, "Platform"), "main_loop", 0);
-  mrb_load_string(mrb, "Platform::Emscripten.main_loop");
+  struct RClass *platform = mrb_module_get_under(mrb, mrb_module_get(mrb, "Platform"), "Emscripten");
+  mrb_funcall(mrb, mrb_obj_value(platform), "main_loop", 0);
+  // mrb_load_string(mrb, "Platform::Emscripten.main_loop");
 }
 
 mrb_value mrb_set_main_loop(mrb_state *mrb, mrb_value self)
