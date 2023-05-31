@@ -1,4 +1,5 @@
 ## mruby-emscripten-functions
+
 A small mruby gem to set an emscripten main loop.
 
 ```Ruby
@@ -29,7 +30,7 @@ end
 if Platform.web?
     Platform::Emscripten.set_main_loop
 else
-    loop { Platform.main_loop }
+    loop { Platform::Emscripten.main_loop }
 end
 ```
 
