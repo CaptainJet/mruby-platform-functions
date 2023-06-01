@@ -73,17 +73,17 @@ mrb_value mrb_local_storage_get_item(mrb_state *mrb, mrb_value self)
   return mrb_str_new_cstr(mrb, js_local_storage_get_item(key));
 }
 
-void mrb_real_main_loop(void *arg)
+void mrb_real_main_loop(void *mrb)
 {
-  mrb_state *mrb = arg;
-  struct RClass *platform = mrb_module_get_under(mrb, mrb_module_get(mrb, "Platform"), "Emscripten");
-  mrb_funcall(mrb, mrb_obj_value(platform), "main_loop", 0);
+  struct RClass *platform = mrb_module_get(mrb, "Platform");
+  struct RClass *emscripten = mrb_module_get_under(mrb, platform, "Emscripten");
+  mrb_funcall(mrb, mrb_obj_value(emscripten), "main_loop", 0);
   // mrb_load_string(mrb, "Platform::Emscripten.main_loop");
 }
 
 mrb_value mrb_set_main_loop(mrb_state *mrb, mrb_value self)
 {
-  emscripten_set_main_loop_arg(mrb_real_main_loop, &mrb, 0, 1);
+  emscripten_set_main_loop_arg(mrb_real_main_loop, mrb, 0, 1);
   return mrb_nil_value();
 }
 #endif
