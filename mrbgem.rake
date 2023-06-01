@@ -1,4 +1,4 @@
-MRuby::Gem::Specification.new('mruby-emscripten-functions') do |spec|
+MRuby::Gem::Specification.new('mruby-platform-functions') do |spec|
   spec.license = 'MIT'
   spec.author  = 'CaptainJet'
 

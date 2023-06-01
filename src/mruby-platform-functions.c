@@ -87,8 +87,27 @@ mrb_value mrb_set_main_loop(mrb_state *mrb, mrb_value self)
   return mrb_nil_value();
 }
 #endif
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+#include <windef.h>
+#include <winbase.h>
+#include <shtypes.h>
+#include <wincon.h>
 
-void mrb_mruby_emscripten_functions_gem_init(mrb_state *mrb)
+mrb_value mrb_mingw_attach_console(mrb_state *mrb, mrb_value self)
+{
+  // This allows us to write to a cmd.exe or powershell if we were run from
+  // one, but otherwise don't open another window.
+  if (AttachConsole(ATTACH_PARENT_PROCESS))
+  {
+    freopen("CONIN$", "r", stdin);
+    freopen("CONOUT$", "w", stdout);
+    freopen("CONOUT$", "w", stderr);
+    return mrb_bool_value(1);
+  }
+  return mrb_bool_value(0);
+}
+#endif
+void mrb_mruby_platform_functions_gem_init(mrb_state *mrb)
 {
 #ifdef __EMSCRIPTEN__
   struct RClass *Mruby_emscripten_platform_module;
@@ -98,9 +117,14 @@ void mrb_mruby_emscripten_functions_gem_init(mrb_state *mrb)
   mrb_define_module_function(mrb, Mruby_emscripten_platform_module, "get_local_storage", mrb_local_storage_get_item, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, Mruby_emscripten_platform_module, "get_attribute_from_element", mrb_get_attribute_from_element, MRB_ARGS_REQ(2));
 #endif
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+  struct RClass *Mruby_windows_platform_module;
+  Mruby_windows_platform_module = mrb_define_module_under(mrb, mrb_module_get(mrb, "Platform"), "Windows");
+  mrb_define_module_function(mrb, Mruby_windows_platform_module, "attach_console", mrb_mingw_attach_console, MRB_ARGS_NONE());
+#endif
 }
 
-void mrb_mruby_emscripten_functions_gem_final(mrb_state *mrb)
+void mrb_mruby_platform_functions_gem_final(mrb_state *mrb)
 {
   /* finalizer */
 }

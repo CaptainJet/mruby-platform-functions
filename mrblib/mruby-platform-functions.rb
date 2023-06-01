@@ -24,4 +24,12 @@ module Platform
       end
     end
   end
+
+  module Windows
+    unless respond_to?(:attach_console)
+      def self.attach_console
+        raise PlatformError, "attach_console only available for windows platform"
+      end
+    end
+  end
 end
