@@ -6,7 +6,7 @@ EM_JS(char *, js_get_attribute_from_element, (const char *selectorPointer, const
   let attribute = Module.UTF8ToString(attributePointer);
   let value;
 
-  if (attribute.slice(0, 5) == = 'data-')
+  if (attribute.slice(0, 5) === 'data-')
   {
     attribute = attribute.slice(5, attribute.length);
     value = document.querySelector(selector).dataset[attribute];
