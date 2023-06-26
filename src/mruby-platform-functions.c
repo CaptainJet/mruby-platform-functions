@@ -1,6 +1,19 @@
 #include "mruby.h"
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
+EM_JS(int, js_get_canvas_width, (), { return Module.canvas.width; });
+EM_JS(int, js_get_canvas_height, (), { return Module.canvas.height; });
+
+mrb_value mrb_get_canvas_width(mrb_state *mrb, mrb_value self)
+{
+  return mrb_int_value(mrb, js_get_canvas_width());
+}
+
+mrb_value mrb_get_canvas_height(mrb_state *mrb, mrb_value self)
+{
+  return mrb_int_value(mrb, js_get_canvas_height());
+}
+
 EM_JS(char *, js_get_attribute_from_element, (const char *selectorPointer, const char *attributePointer), {
   const selector = Module.UTF8ToString(selectorPointer);
   let attribute = Module.UTF8ToString(attributePointer);
@@ -113,6 +126,8 @@ void mrb_mruby_platform_functions_gem_init(mrb_state *mrb)
   struct RClass *Mruby_emscripten_platform_module;
   Mruby_emscripten_platform_module = mrb_define_module_under(mrb, mrb_module_get(mrb, "Platform"), "Emscripten");
   mrb_define_module_function(mrb, Mruby_emscripten_platform_module, "set_main_loop", mrb_set_main_loop, MRB_ARGS_NONE());
+  mrb_define_module_function(mrb, Mruby_emscripten_platform_module, "get_canvas_width", mrb_get_canvas_width, MRB_ARGS_NONE());
+  mrb_define_module_function(mrb, Mruby_emscripten_platform_module, "get_canvas_height", mrb_get_canvas_height, MRB_ARGS_NONE());
   mrb_define_module_function(mrb, Mruby_emscripten_platform_module, "set_local_storage", mrb_local_storage_set_item, MRB_ARGS_REQ(2));
   mrb_define_module_function(mrb, Mruby_emscripten_platform_module, "get_local_storage", mrb_local_storage_get_item, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, Mruby_emscripten_platform_module, "get_attribute_from_element", mrb_get_attribute_from_element, MRB_ARGS_REQ(2));

@@ -6,6 +6,18 @@ module Platform
       end
     end
 
+    unless respond_to?(:get_canvas_width)
+      def self.get_canvas_width
+        raise PlatformError, "get_canvas_width only available for web platform"
+      end
+    end
+
+    unless respond_to?(:get_canvas_height)
+      def self.get_canvas_height
+        raise PlatformError, "get_canvas_height only available for web platform"
+      end
+    end
+
     unless respond_to?(:set_local_storage)
       def self.set_local_storage(key, value)
         raise PlatformError, "set_local_storage only available for web platform"
