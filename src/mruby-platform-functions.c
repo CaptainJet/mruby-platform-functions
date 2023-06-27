@@ -96,7 +96,9 @@ void mrb_real_main_loop(void *mrb)
 
 mrb_value mrb_set_main_loop(mrb_state *mrb, mrb_value self)
 {
-  emscripten_set_main_loop_arg(mrb_real_main_loop, mrb, 0, 1);
+  mrb_int fps = 0;
+  mrb_get_args(mrb, "|i", &fps);
+  emscripten_set_main_loop_arg(mrb_real_main_loop, mrb, fps, 1);
   return mrb_nil_value();
 }
 #endif
@@ -125,7 +127,7 @@ void mrb_mruby_platform_functions_gem_init(mrb_state *mrb)
 #ifdef __EMSCRIPTEN__
   struct RClass *Mruby_emscripten_platform_module;
   Mruby_emscripten_platform_module = mrb_define_module_under(mrb, mrb_module_get(mrb, "Platform"), "Emscripten");
-  mrb_define_module_function(mrb, Mruby_emscripten_platform_module, "set_main_loop", mrb_set_main_loop, MRB_ARGS_NONE());
+  mrb_define_module_function(mrb, Mruby_emscripten_platform_module, "set_main_loop", mrb_set_main_loop, MRB_ARGS_OPT(1));
   mrb_define_module_function(mrb, Mruby_emscripten_platform_module, "get_canvas_width", mrb_get_canvas_width, MRB_ARGS_NONE());
   mrb_define_module_function(mrb, Mruby_emscripten_platform_module, "get_canvas_height", mrb_get_canvas_height, MRB_ARGS_NONE());
   mrb_define_module_function(mrb, Mruby_emscripten_platform_module, "set_local_storage", mrb_local_storage_set_item, MRB_ARGS_REQ(2));

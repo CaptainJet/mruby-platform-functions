@@ -11,7 +11,9 @@ conf.gem :github => 'captainjet/mruby-platform-functions', :branch => 'main'
 ```Ruby
 
 # Emscripten
-Platform::Emscripten.set_main_loop #=> Sets the main loop of the program to "Platform::Emscripten.main_loop", raises PlatformError if not on web
+Platform::Emscripten.get_canvas_width #=> Gets the width of an webgl canvas. Assumes Module.canvas is available on the JS side.
+Platform::Emscripten.get_canvas_height #=> Gets the height of an webgl canvas. Assumes Module.canvas is available on the JS side.
+Platform::Emscripten.set_main_loop(fps = 0) #=> Sets the main loop of the program to "Platform::Emscripten.main_loop", raises PlatformError if not on web
 Platform::Emscripten.set_local_storage(key, value) #=> Sets a local storage key to the value, raises PlatformError if not on web
 Platform::Emscripten.get_local_storage(key) #=> Gets the value of a local storage key, raises PlatformError if not on web
 Platform::Emscripten.get_attribute_from_element(selector, attribute) #=> Get the attribute from a page element, raises PlatformError if not on web
