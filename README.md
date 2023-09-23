@@ -16,6 +16,9 @@ Platform::Emscripten.get_canvas_height #=> Gets the height of an webgl canvas. A
 Platform::Emscripten.set_main_loop(fps = 0) #=> Sets the main loop of the program to "Platform::Emscripten.main_loop", raises PlatformError if not on web
 Platform::Emscripten.set_local_storage(key, value) #=> Sets a local storage key to the value, raises PlatformError if not on web
 Platform::Emscripten.get_local_storage(key) #=> Gets the value of a local storage key, raises PlatformError if not on web
+Platform::Emscripten.save_from_memfs(memfsname, localfsname) #=> Save a file from the MEMFS to the local computer. Requires FileSaver.js to be loaded.
+                                                             #=> <script type='text/javascript' src="https://cdn.jsdelivr.net/gh/eligrey/FileSaver.js/dist/FileSaver.min.js"> </script>
+
 Platform::Emscripten.get_attribute_from_element(selector, attribute) #=> Get the attribute from a page element, raises PlatformError if not on web
 
 # Windows
@@ -43,5 +46,5 @@ end
 
 ## License
 
-MIT
-Code from https://github.com/HellRok/Taylor
+- MIT
+- Code from https://github.com/HellRok/Taylor

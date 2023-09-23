@@ -30,6 +30,12 @@ module Platform
       end
     end
 
+    unless respond_to?(:save_from_memfs)
+      def self.save_from_memfs(memfsname, localfsname)
+        raise PlatformError, "save_from_memfs only available for web platform"
+      end
+    end
+
     unless respond_to?(:get_attribute_from_element)
       def self.get_attribute_from_element(selector, attribute)
         raise PlatformError, "get_attribute_from_element only available for web platform"

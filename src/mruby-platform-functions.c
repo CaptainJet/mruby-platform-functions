@@ -63,6 +63,34 @@ mrb_value mrb_local_storage_set_item(mrb_state *mrb, mrb_value self)
   return mrb_nil_value();
 }
 
+// This function requires FileSaver.js to be loaded on the webpage
+// <script type='text/javascript' src="https://cdn.jsdelivr.net/gh/eligrey/FileSaver.js/dist/FileSaver.min.js"> </script>
+EM_JS(void, saveFileFromMEMFSToDisk, (const char *memoryFSname, const char *localFSname),     // This can be called by C/C++ code
+  {
+    var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    var data = Module.FS.readFile(Module.UTF8ToString(memoryFSname));
+    var blob;
+
+    if (isSafari) blob = new Blob([data.buffer], { type: "application/octet-stream" });
+    else blob = new Blob([data.buffer], { type: "application/octet-binary" });
+
+    // NOTE: SaveAsDialog is a browser setting. For example, in Google Chrome,
+    // in Settings/Advanced/Downloads section you have a setting:
+    // 'Ask where to save each file before downloading' - which you can set true/false.
+    // If you enable this setting it would always ask you and bring the SaveAsDialog
+    saveAs(blob, Module.UTF8ToString(localFSname));
+});
+
+mrb_value mrb_save_from_memfs(mrb_state *mrb, mrb_value self)
+{
+  char *memfsname, *localfsname;
+  mrb_get_args(mrb, "zz", &memfsname, &localfsname);
+
+  saveFileFromMEMFSToDisk(memfsname, localfsname);
+
+  return mrb_nil_value();
+}
+
 EM_JS(char *, js_local_storage_get_item, (const char *keyPointer), {
   const key = Module.UTF8ToString(keyPointer);
 
@@ -132,6 +160,7 @@ void mrb_mruby_platform_functions_gem_init(mrb_state *mrb)
   mrb_define_module_function(mrb, Mruby_emscripten_platform_module, "get_canvas_height", mrb_get_canvas_height, MRB_ARGS_NONE());
   mrb_define_module_function(mrb, Mruby_emscripten_platform_module, "set_local_storage", mrb_local_storage_set_item, MRB_ARGS_REQ(2));
   mrb_define_module_function(mrb, Mruby_emscripten_platform_module, "get_local_storage", mrb_local_storage_get_item, MRB_ARGS_REQ(1));
+  mrb_define_module_function(mrb, Mruby_emscripten_platform_module, "save_from_memfs", mrb_save_from_memfs, MRB_ARGS_REQ(2));
   mrb_define_module_function(mrb, Mruby_emscripten_platform_module, "get_attribute_from_element", mrb_get_attribute_from_element, MRB_ARGS_REQ(2));
 #endif
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
