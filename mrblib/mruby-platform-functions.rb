@@ -6,6 +6,12 @@ module Platform
       end
     end
 
+    unless respond_to?(:exec_js)
+      def self.exec_js(string = nil)
+        raise PlatformError, "exec_js only available for web platform"
+      end
+    end
+
     unless respond_to?(:get_canvas_width)
       def self.get_canvas_width
         raise PlatformError, "get_canvas_width only available for web platform"

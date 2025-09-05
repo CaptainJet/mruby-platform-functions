@@ -114,6 +114,15 @@ mrb_value mrb_local_storage_get_item(mrb_state *mrb, mrb_value self)
   return mrb_str_new_cstr(mrb, js_local_storage_get_item(key));
 }
 
+mrb_value mrb_exec_js(mrb_state *mrb, mrb_value self)
+{
+  char *key;
+  mrb_get_args(mrb, "z", &key);
+  emscripten_run_script(key);
+
+  return mrb_nil_value();
+}
+
 void mrb_real_main_loop(void *mrb)
 {
   struct RClass *platform = mrb_module_get(mrb, "Platform");
@@ -156,6 +165,7 @@ void mrb_mruby_platform_functions_gem_init(mrb_state *mrb)
   struct RClass *Mruby_emscripten_platform_module;
   Mruby_emscripten_platform_module = mrb_define_module_under(mrb, mrb_module_get(mrb, "Platform"), "Emscripten");
   mrb_define_module_function(mrb, Mruby_emscripten_platform_module, "set_main_loop", mrb_set_main_loop, MRB_ARGS_OPT(1));
+  mrb_define_module_function(mrb, Mruby_emscripten_platform_module, "exec_js", mrb_exec_js, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, Mruby_emscripten_platform_module, "get_canvas_width", mrb_get_canvas_width, MRB_ARGS_NONE());
   mrb_define_module_function(mrb, Mruby_emscripten_platform_module, "get_canvas_height", mrb_get_canvas_height, MRB_ARGS_NONE());
   mrb_define_module_function(mrb, Mruby_emscripten_platform_module, "set_local_storage", mrb_local_storage_set_item, MRB_ARGS_REQ(2));
